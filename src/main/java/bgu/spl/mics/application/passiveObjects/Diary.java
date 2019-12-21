@@ -1,8 +1,11 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,15 +58,12 @@ public class Diary {
 	 * This method is called by the main method in order to generate the output.
 	 */
 	public void printToFile(String filename){
-		//make sure it works
-		Gson g = new Gson();
-		String diary = g.toJson(reports);
-		try (Writer write = new FileWriter(filename)){
+		Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).setPrettyPrinting().create();
+		String diary = gson.toJson(Diary.getInstance());
+		try(Writer write=new FileWriter(filename)){
 			write.write(diary);
-			write.write(total.get());
-		}
-		catch (Exception e){
-			System.out.println("filename incorrect");
+		} catch (Exception e) {
+
 		}
 	}
 

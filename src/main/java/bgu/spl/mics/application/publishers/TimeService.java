@@ -25,7 +25,6 @@ public class TimeService extends Publisher {
 	private final int tick = 100;
 	private int duration;
 	private Timer timer;
-	private MessageBroker messageBroker;
 	private int tickCount;
 
 
@@ -34,7 +33,6 @@ public class TimeService extends Publisher {
 		this.duration=duration;
 		timer = new Timer();
 		tickCount=0;
-		messageBroker = MessageBrokerImpl.getInstance();
 	}
 
 	@Override
@@ -48,13 +46,13 @@ public class TimeService extends Publisher {
 			public void run() {
 				if(tickCount>duration){
 					Broadcast finalTick = new FinalTickBroadcast();
-					messageBroker.sendBroadcast(finalTick);
+					getSimplePublisher().sendBroadcast(finalTick);
 					timer.cancel();
 					timer.purge();
 				}
 				else {
 					Broadcast broadcast = new TickBroadcast(tickCount++);
-					messageBroker.sendBroadcast(broadcast);
+					getSimplePublisher().sendBroadcast(broadcast);
 				}
 			}
 		},tick,tick);
