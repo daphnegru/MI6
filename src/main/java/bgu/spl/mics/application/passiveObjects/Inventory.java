@@ -2,7 +2,8 @@ package bgu.spl.mics.application.passiveObjects;
 
 import com.google.gson.Gson;
 
-import java.io.*;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,7 +59,7 @@ public class Inventory {
 				this.gadgets.remove(gadget);
 				return true;
 			}
-			notifyAll();
+//			notifyAll();
 			return false;
 		}
 	}
@@ -70,8 +71,6 @@ public class Inventory {
 	 * list of all the of the gadgeds.
 	 * This method is called by the main method in order to generate the output.
 	 */
-
-
 	public void printToFile(String filename){
 		Gson g = new Gson();
 		String inventory = g.toJson(gadgets);
@@ -82,5 +81,4 @@ public class Inventory {
 			System.out.println("filename incorrect");
 		}
 	}
-
 }

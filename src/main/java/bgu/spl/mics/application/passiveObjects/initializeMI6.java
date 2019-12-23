@@ -47,12 +47,12 @@ public class initializeMI6 {
         Moneypenny[] moneypennnySubs = setMoneypennys(numOfMoneyPenny);
         Intelligence[] intelligenceSubs = setIntelligence(intelligence);
         Q[] q = {new Q()};
-        subs[0] = msubs;
-        subs[1] = moneypennnySubs;
-        subs[2] = intelligenceSubs;
-        subs[3] = q;
-        int numOfSubsAndPubs = numOfM + numOfMoneyPenny + intelligenceSubs.length + q.length + 1;
-        Thread[] threads = new Thread[numOfSubsAndPubs];
+        subs[0] = intelligenceSubs;
+        subs[1] = q;
+        subs[2] = msubs;
+        subs[3] = moneypennnySubs;
+        int numOfSubsAndPubs = numOfM + numOfMoneyPenny + intelligenceSubs.length + q.length;
+        Thread[] threads = new Thread[numOfSubsAndPubs+1];
         int index = 0;
         for (int i = 0; i <subs.length;i++){
             for (int j = 0; j<subs[i].length;j++){
@@ -65,10 +65,16 @@ public class initializeMI6 {
         }
 
         ThreadCounter threadCounter = ThreadCounter.GetInstance();
+//        TimeService timeService = new TimeService(time);
+//        Thread timeThread = new Thread(timeService);
+//        threads[index] = timeThread;
+//        timeThread.setName(timeService.getName());
+//        timeThread.start();
 
         while (numOfSubsAndPubs != threadCounter.getCounter().get()){
 
         }
+
         TimeService timeService = new TimeService(time);
         Thread timeThread = new Thread(timeService);
         threads[index] = timeThread;
@@ -162,4 +168,3 @@ public class initializeMI6 {
         Diary.getInstance().printToFile(diaryPath);
     }
 }
-

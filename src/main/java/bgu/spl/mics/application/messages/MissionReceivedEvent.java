@@ -1,50 +1,20 @@
 package bgu.spl.mics.application.messages;
 
 import bgu.spl.mics.Event;
+import bgu.spl.mics.application.passiveObjects.MissionInfo;
 
 import java.util.List;
 
-public class MissionReceivedEvent implements Event<Integer> {
+public class MissionReceivedEvent implements Event {
 
-    private String missionName;
-    private List<String> serialAgentsNumbers;
-    private String gadget;
-    private int timeIssued;
-    private int timeExpired;
-    private int duration;
+    private MissionInfo mission;
 
-
-    public MissionReceivedEvent (String missionName, List<String> serialAgentsNumbers, String gadget, int timeExpired, int timeIssued, int duration){
-        this.missionName=missionName;
-        this.serialAgentsNumbers = serialAgentsNumbers;
-        this.gadget=gadget;
-        this.timeIssued = timeIssued;
-        this.timeExpired = timeExpired;
-        this.duration = duration;
-
+    public MissionReceivedEvent (MissionInfo mission){
+        this.mission=mission;
     }
 
-    public String getMissionName(){
-        return missionName;
+    public MissionInfo getMission(){
+        return mission;
     }
 
-    public List<String> getSerialAgentsNumbers(){
-        return serialAgentsNumbers;
-    }
-
-    public String getGadget(){
-        return gadget;
-    }
-
-    public int getTimeIssued(){
-        return timeIssued;
-    }
-
-    public int getTimeExpired(){
-        return timeExpired;
-    }
-
-    public int getDuration(){
-        return duration;
-    }
 }

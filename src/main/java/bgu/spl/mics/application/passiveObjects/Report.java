@@ -11,7 +11,7 @@ import java.util.List;
 public class Report {
 	private String name;
 	private int m;
-	private int moneypenny;
+	int moneypenny;
 	private List<String> agentsSerialNumbers;
 	private List<String> agentsNames;
 	private String gadgetName;
@@ -152,6 +152,7 @@ public class Report {
 	 * Retrieves the time-tick when the report has been created.
 	 */
 	public int getTimeCreated() {
+
 		return timeCreated;
 	}
 

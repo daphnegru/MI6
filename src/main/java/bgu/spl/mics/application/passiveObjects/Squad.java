@@ -1,5 +1,9 @@
 package bgu.spl.mics.application.passiveObjects;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Passive data-object representing a information about an agent in MI6.
@@ -14,9 +18,8 @@ public class Squad {
 	 * Retrieves the single instance of this class.
 	 */
 	private Squad(){
-		agents=new HashMap<>();
+		agents=new HashMap<String, Agent>();
 	}
-
 
 	private static class SingletonHolder{
 		private static Squad squad= new Squad();
@@ -42,10 +45,10 @@ public class Squad {
 	/**
 	 * Releases agents.
 	 */
-	public void releaseAgents(List<String> serials){
+	public synchronized void releaseAgents(List<String> serials){
 		for(int i=0;i<serials.size();i++){
-			agents.get(serials.get(i)).release();
-			synchronized (this) {
+			if(agents.containsKey(serials.get(i))){
+				agents.get(serials.get(i)).release();
 				notifyAll();
 			}
 		}
@@ -80,8 +83,7 @@ public class Squad {
 				return false;
 			}
 		}
-
-		for (int i = 0; i <serials.size();i++){
+		for (int i = 0; i<serials.size();i++){
 			Agent a = agents.get(serials.get(i));
 			synchronized (a){
 				while(!a.isAvailable()){
@@ -105,10 +107,11 @@ public class Squad {
 		List<String> agentsNames= new LinkedList<>();
 		for(int i=0;i<serials.size();i++){
 			if(agents.containsKey(serials.get(i))){
-				agentsNames.add(agents.get(i).getName());
+				Agent a = agents.get(serials.get(i));
+				String name = a.getName();
+				agentsNames.add(name);
 			}
 		}
 		return agentsNames;
 	}
-
 }

@@ -1,8 +1,11 @@
 package bgu.spl.mics.application.subscribers;
 
+import bgu.spl.mics.Future;
 import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.passiveObjects.Squad;
+
+import java.util.List;
 
 /**
  * Only this type of Subscriber can access the squad.
@@ -16,20 +19,18 @@ public class Moneypenny extends Subscriber {
 	Squad s;
 	private int id;
 	private int currTick;
+	private Future<Boolean> result;
 
 	public Moneypenny(int id) {
 		super("Moneypenny" + id);
 		s = Squad.getInstance();
 		this.id=id;
 		currTick=0;
+		result = new Future<Boolean>();
 	}
 
 	public int getCurrTick(){
 		return currTick;
-	}
-
-	public int getId(){
-		return id;
 	}
 
 	@Override
@@ -37,24 +38,50 @@ public class Moneypenny extends Subscriber {
 		subscribeBroadcast(TickBroadcast.class,tick->{
 			currTick=tick.getTick();
 		});
-		subscribeEvent(AgentsAvailableEvent.class, message -> {
+
+		subscribeEvent(AgentsAvailableEvent.class, message ->{
 			boolean available = s.getAgents(message.getSerial());
+			List<String> names = s.getAgentsNames(message.getSerial());
+			Integer currId = id;
+			Object[] report = new Object[3];
+			report[0] = names;
+			report[1]=currId;
+			report[2] = result;
 			if (available){
-				complete(message,id);
+				complete(message,report);
 			}
 			else {
-				complete(message,-1);
+				Integer x = -1;
+				report[1] = x;
+				complete(message,report);
+			}
+			if (result.get()){
+				s.sendAgents(message.getSerial(),message.getDuration());
+				s.releaseAgents(message.getSerial());
+			}
+			else {
+				s.releaseAgents(message.getSerial());
 			}
 		});
-		subscribeEvent(SendAndReleaseAgentsEvent.class,message -> {
-			s.sendAgents(message.getSerials(),message.getDuration());
-			s.releaseAgents(message.getSerials());
-			complete(message,s.getAgentsNames(message.getSerials()));
-		});
-		subscribeEvent(ReleaseAgentsEvent.class, message -> {
-			s.releaseAgents(message.getSerials());
-			complete(message,id);
-		});
+
+//		subscribeEvent(AgentsAvailableEvent.class, message -> {
+//			boolean available = s.getAgents(message.getSerial());
+//			if (available){
+//				complete(message,id);
+//			}
+//			else {
+//				complete(message,-1);
+//			}
+//		});
+//		subscribeEvent(SendAndReleaseAgentsEvent.class,message -> {
+//			s.sendAgents(message.getSerials(),message.getDuration());
+//			s.releaseAgents(message.getSerials());
+//			complete(message,s.getAgentsNames(message.getSerials()));
+//		});
+//		subscribeEvent(ReleaseAgentsEvent.class, message -> {
+//			s.releaseAgents(message.getSerials());
+//			complete(message,id);
+//		});
 		subscribeBroadcast(FinalTickBroadcast.class, message -> this.terminate());
 	}
 

@@ -1,8 +1,5 @@
 package bgu.spl.mics.application.publishers;
 
-import bgu.spl.mics.Broadcast;
-import bgu.spl.mics.MessageBroker;
-import bgu.spl.mics.MessageBrokerImpl;
 import bgu.spl.mics.Publisher;
 import bgu.spl.mics.application.messages.FinalTickBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
@@ -25,14 +22,14 @@ public class TimeService extends Publisher {
 	private final int tick = 100;
 	private int duration;
 	private Timer timer;
-	private int tickCount;
+	private AtomicInteger tickCount;
 
 
 	public TimeService(int duration) {
 		super("TimeService");
 		this.duration=duration;
 		timer = new Timer();
-		tickCount=0;
+		tickCount=new AtomicInteger(1);
 	}
 
 	@Override
@@ -44,15 +41,17 @@ public class TimeService extends Publisher {
 	public void run() {
 		timer.schedule(new TimerTask(){
 			public void run() {
-				if(tickCount>duration){
-					Broadcast finalTick = new FinalTickBroadcast();
+				if(tickCount.get() == duration){
+					FinalTickBroadcast finalTick = new FinalTickBroadcast();
 					getSimplePublisher().sendBroadcast(finalTick);
 					timer.cancel();
 					timer.purge();
+					return;
 				}
 				else {
-					Broadcast broadcast = new TickBroadcast(tickCount++);
-					getSimplePublisher().sendBroadcast(broadcast);
+					TickBroadcast tickBroadcast = new TickBroadcast(tickCount.incrementAndGet());
+					getSimplePublisher().sendBroadcast(tickBroadcast);
+//					System.out.println(tickBroadcast.getTick());
 				}
 			}
 		},tick,tick);
