@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.LinkedList;
@@ -58,11 +59,15 @@ public class Diary {
 	 */
 	public void printToFile(String filename){
 		Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).setPrettyPrinting().create();
-		String diary = gson.toJson(Diary.getInstance());
+		String diary = gson.toJson(this);
+		String t = "total:";
+		String total = gson.toJson(getTotal());
+		String totals = gson.toJson(t);
 		try(Writer write=new FileWriter(filename)){
 			write.write(diary);
-			int t = total.get();
-			write.write(t);
+			write.write(totals);
+			write.write(total);
+			write.close();
 		} catch (Exception e) {
 
 		}
