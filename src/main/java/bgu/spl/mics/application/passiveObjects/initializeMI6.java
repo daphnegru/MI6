@@ -66,7 +66,7 @@ public class initializeMI6 {
 
         ThreadCounter threadCounter = ThreadCounter.GetInstance();
 
-        while (numOfSubsAndPubs != threadCounter.getCounter().get()){
+        while (numOfSubsAndPubs != threadCounter.getCount().get()){
 
         }
 
