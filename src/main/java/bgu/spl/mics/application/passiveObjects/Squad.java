@@ -88,6 +88,7 @@ public class Squad {
 			synchronized (a){
 				while(!a.isAvailable()){
 					try{
+						//		System.out.println(a.getName() + " waits");
 						a.wait();
 					}
 					catch (InterruptedException e) {}

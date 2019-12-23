@@ -9,6 +9,7 @@ import bgu.spl.mics.application.messages.MissionReceivedEvent;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.MissionInfo;
 
+import javax.swing.plaf.synth.SynthDesktopIconUI;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -38,9 +39,9 @@ public class Intelligence extends Subscriber {
 		subscribeBroadcast(TickBroadcast.class,(TickBroadcast tickBroadcast)->{
 			for(MissionInfo mission: missionInfos){
 				if(tickBroadcast.getTick()==mission.getTimeIssued()){
+					//      System.out.println(mission.getMissionName() + " started");
 					MissionReceivedEvent m = new MissionReceivedEvent(mission);
 					Future<Integer> intel = messageBroker.sendEvent(m);
-					//complete(m,intel.get());
 				}
 			}
 		});

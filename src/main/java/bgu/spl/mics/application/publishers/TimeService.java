@@ -29,7 +29,7 @@ public class TimeService extends Publisher {
 		super("TimeService");
 		this.duration=duration;
 		timer = new Timer();
-		tickCount=new AtomicInteger(1);
+		tickCount=new AtomicInteger(0);
 	}
 
 	@Override

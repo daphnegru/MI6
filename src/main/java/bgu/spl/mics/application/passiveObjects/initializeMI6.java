@@ -65,11 +65,6 @@ public class initializeMI6 {
         }
 
         ThreadCounter threadCounter = ThreadCounter.GetInstance();
-//        TimeService timeService = new TimeService(time);
-//        Thread timeThread = new Thread(timeService);
-//        threads[index] = timeThread;
-//        timeThread.setName(timeService.getName());
-//        timeThread.start();
 
         while (numOfSubsAndPubs != threadCounter.getCounter().get()){
 
@@ -83,6 +78,7 @@ public class initializeMI6 {
 
         for (int i =0; i<threads.length;i++){
             try {
+                System.out.println(threads[i].getName() +" join");
                 threads[i].join();
             }
             catch (Exception e){
@@ -150,7 +146,8 @@ public class initializeMI6 {
                 serialNums.sort(Comparator.naturalOrder());
                 int duration = info.get("duration").getAsInt();
                 String gadget = info.get("gadget").getAsString();
-                String missionName = info.get("missionName").getAsString();
+                String missionName = info.get("name").getAsString();
+                //String missionName = info.get("missionName").getAsString();
                 int timeExpired = info.get("timeExpired").getAsInt();
                 int timeIssued = info.get("timeIssued").getAsInt();
                 MissionInfo missionInfo1 = new MissionInfo(missionName, serialNums, gadget, timeExpired, timeIssued, duration);

@@ -112,7 +112,7 @@ public abstract class Subscriber extends RunnableSubPub {
     }
 
     /**
-     * The entry point of the Subscriber.
+     * The entry point of the Subscriber. TODO: you must complete this code
      * otherwise you will end up in an infinite loop.
      */
     @Override
@@ -130,8 +130,10 @@ public abstract class Subscriber extends RunnableSubPub {
                 terminated=true;
                 messageBroker.unregister(this);
             }
-        }
+            // messageBroker.unregister(this);
 
+        }
+//        messageBroker.unregister(this);
     }
 
 }

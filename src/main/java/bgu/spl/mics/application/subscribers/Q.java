@@ -31,6 +31,7 @@ public class Q extends Subscriber {
 	protected void initialize() {
 		subscribeBroadcast(TickBroadcast.class, tick->{
 			currTick=tick.getTick();
+			//System.out.println("qtime"+currTick);
 		});
 
 		subscribeEvent(GadgetAvailableEvent.class,message ->{

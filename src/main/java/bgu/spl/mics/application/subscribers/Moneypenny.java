@@ -55,6 +55,7 @@ public class Moneypenny extends Subscriber {
 				report[1] = x;
 				complete(message,report);
 			}
+			//	System.out.println("agents names: "+ report[0]+" moneypenny: "+report[1]+" result: "+result.get());
 			if (result.get()){
 				s.sendAgents(message.getSerial(),message.getDuration());
 				s.releaseAgents(message.getSerial());
@@ -64,24 +65,6 @@ public class Moneypenny extends Subscriber {
 			}
 		});
 
-//		subscribeEvent(AgentsAvailableEvent.class, message -> {
-//			boolean available = s.getAgents(message.getSerial());
-//			if (available){
-//				complete(message,id);
-//			}
-//			else {
-//				complete(message,-1);
-//			}
-//		});
-//		subscribeEvent(SendAndReleaseAgentsEvent.class,message -> {
-//			s.sendAgents(message.getSerials(),message.getDuration());
-//			s.releaseAgents(message.getSerials());
-//			complete(message,s.getAgentsNames(message.getSerials()));
-//		});
-//		subscribeEvent(ReleaseAgentsEvent.class, message -> {
-//			s.releaseAgents(message.getSerials());
-//			complete(message,id);
-//		});
 		subscribeBroadcast(FinalTickBroadcast.class, message -> this.terminate());
 	}
 

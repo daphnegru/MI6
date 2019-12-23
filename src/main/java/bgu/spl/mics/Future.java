@@ -35,7 +35,7 @@ public class Future<T> {
 		synchronized (this) {
 			while (!done) {
 				try {
-					this.wait();
+					wait();
 				} catch (Exception e) {
 
 				}

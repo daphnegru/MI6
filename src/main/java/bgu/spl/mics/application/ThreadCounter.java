@@ -6,22 +6,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  * **/
 public class ThreadCounter {
 
-    private AtomicInteger counter;
+    private AtomicInteger count;
 
     private ThreadCounter() {
-        counter = new AtomicInteger(0);
+        count = new AtomicInteger(0);
     }
 
     public static ThreadCounter GetInstance(){
         return ThreadCounterHolder.threadCounter;
     }
 
-    public AtomicInteger getCounter() {
-        return counter;
+    public AtomicInteger getCount() {
+        return count;
     }
 
     public void increase(){
-        counter.incrementAndGet();
+        count.incrementAndGet();
     }
 
     private static class ThreadCounterHolder{
