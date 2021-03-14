@@ -4,10 +4,9 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.Writer;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -20,22 +19,20 @@ import java.util.concurrent.atomic.AtomicInteger;
  * You can add ONLY private fields and methods to this class as you see fit.
  */
 public class Diary {
-	private List<Report> reports;
-	private static AtomicInteger total;
-
 	/**
 	 * Retrieves the single instance of this class.
 	 */
+	private static Diary instance=new Diary();
+	private List<Report> reports;
+	private AtomicInteger total;
+
 	private Diary(){
-		reports=new LinkedList<Report>();
+		reports=new ArrayList<>();
 		total = new AtomicInteger(0);
-	}
-	private static class SingletonHolder{
-		private static Diary diary= new Diary();
 	}
 
 	public static Diary getInstance() {
-		return SingletonHolder.diary;
+		return instance;
 	}
 
 	public List<Report> getReports() {
@@ -47,7 +44,9 @@ public class Diary {
 	 * @param reportToAdd - the report to add
 	 */
 	public void addReport(Report reportToAdd){
-		reports.add(reportToAdd);
+		synchronized (this) {
+			reports.add(reportToAdd);
+		}
 	}
 
 	/**
@@ -57,21 +56,16 @@ public class Diary {
 	 * List of all the reports in the diary.
 	 * This method is called by the main method in order to generate the output.
 	 */
-	public void printToFile(String filename){
-		Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).setPrettyPrinting().create();
-		String diary = gson.toJson(this);
-		String t = "total:";
-		String total = gson.toJson(getTotal());
-		String totals = gson.toJson(t);
+	public void printToFile(String filename) {
+		Gson g = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).setPrettyPrinting().create();
+		String diary=g.toJson(Diary.getInstance());
 		try(Writer write=new FileWriter(filename)){
 			write.write(diary);
-			write.write(totals);
-			write.write(total);
-			write.close();
 		} catch (Exception e) {
 
 		}
 	}
+
 
 	/**
 	 * Gets the total number of received missions (executed / aborted) be all the M-instances.
@@ -84,4 +78,5 @@ public class Diary {
 	public void incrementTotal(){
 		total.incrementAndGet();
 	}
+
 }

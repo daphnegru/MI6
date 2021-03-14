@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 
 import java.io.FileWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -23,7 +21,7 @@ public class Inventory {
 	 * Retrieves the single instance of this class.
 	 */
 	private Inventory(){
-		gadgets=new CopyOnWriteArrayList<String>();
+		gadgets=new CopyOnWriteArrayList<>();
 	}
 
 	private static class SingletonHolder {
@@ -54,14 +52,11 @@ public class Inventory {
 	 * @return 	‘false’ if the gadget is missing, and ‘true’ otherwise
 	 */
 	public boolean getItem(String gadget) {
-		synchronized (gadget) {
-			if (gadgets.contains(gadget)) {
-				this.gadgets.remove(gadget);
-				return true;
-			}
-//			notifyAll();
-			return false;
+		if (gadgets.contains(gadget)) {
+			this.gadgets.remove(gadget);
+			return true;
 		}
+		return false;
 	}
 
 	/**

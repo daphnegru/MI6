@@ -130,10 +130,6 @@ public abstract class Subscriber extends RunnableSubPub {
                 terminated=true;
                 messageBroker.unregister(this);
             }
-            // messageBroker.unregister(this);
-
         }
-//        messageBroker.unregister(this);
     }
-
 }

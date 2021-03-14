@@ -1,5 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import java.util.concurrent.Semaphore;
+
 /**
  * Passive data-object representing a information about an agent in MI6.
  * You must not alter any of the given public methods of this class. 
@@ -10,11 +12,13 @@ public class Agent {
 	private String name;
 	private String sNumber;
 	private Boolean available;
+	private Semaphore s;
 
 	public Agent(String name,String serialNumber){
 		this.name=name;
 		this.sNumber=serialNumber;
 		this.available=true;
+		s = new Semaphore(1,true);
 	}
 
 	/**
@@ -61,7 +65,13 @@ public class Agent {
 	/**
 	 * Acquires an agent.
 	 */
-	public void acquire(){
+	public void acquire() {
+		try {
+			s.acquire();
+		}
+		catch (Exception e){
+			System.out.println("agent");
+		}
 		available=false;
 	}
 
@@ -70,5 +80,6 @@ public class Agent {
 	 */
 	public void release(){
 		available=true;
+		s.release();
 	}
 }

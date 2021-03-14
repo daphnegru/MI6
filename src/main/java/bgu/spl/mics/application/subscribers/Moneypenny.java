@@ -6,6 +6,7 @@ import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.passiveObjects.Squad;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Only this type of Subscriber can access the squad.
@@ -20,6 +21,7 @@ public class Moneypenny extends Subscriber {
 	private int id;
 	private int currTick;
 	private Future<Boolean> result;
+	private int remaining;
 
 	public Moneypenny(int id) {
 		super("Moneypenny" + id);
@@ -36,10 +38,13 @@ public class Moneypenny extends Subscriber {
 	@Override
 	protected void initialize() {
 		subscribeBroadcast(TickBroadcast.class,tick->{
+
 			currTick=tick.getTick();
+			remaining=tick.getTimel();
 		});
 
 		subscribeEvent(AgentsAvailableEvent.class, message ->{
+			//checks if there are agents
 			boolean available = s.getAgents(message.getSerial());
 			List<String> names = s.getAgentsNames(message.getSerial());
 			Integer currId = id;
@@ -47,6 +52,7 @@ public class Moneypenny extends Subscriber {
 			report[0] = names;
 			report[1]=currId;
 			report[2] = result;
+			//if there are agents
 			if (available){
 				complete(message,report);
 			}
@@ -55,17 +61,22 @@ public class Moneypenny extends Subscriber {
 				report[1] = x;
 				complete(message,report);
 			}
-			//	System.out.println("agents names: "+ report[0]+" moneypenny: "+report[1]+" result: "+result.get());
-			if (result.get()){
-				s.sendAgents(message.getSerial(),message.getDuration());
-				s.releaseAgents(message.getSerial());
+			//checks if there is gadget and the time is good
+			Boolean ans = result.get(remaining*100,TimeUnit.MILLISECONDS);
+			if (ans!=null && ans) {
+					s.sendAgents(message.getSerial(), message.getDuration());
 			}
 			else {
-				s.releaseAgents(message.getSerial());
-			}
+				if (available) {
+						s.releaseAgents(message.getSerial());
+					}
+				}
+
 		});
 
-		subscribeBroadcast(FinalTickBroadcast.class, message -> this.terminate());
+		subscribeBroadcast(FinalTickBroadcast.class, message ->{
+			result.resolve(null);
+			this.terminate();
+		});
 	}
-
 }

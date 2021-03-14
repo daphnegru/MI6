@@ -23,6 +23,7 @@ import java.util.List;
 public class initializeMI6 {
 
     public void run(String filePath) {
+        //starts reading the json input
         BufferedReader buffer;
         Gson g;
         JsonObject mi6 = new JsonObject();
@@ -33,25 +34,35 @@ public class initializeMI6 {
         } catch (Exception e) {
             System.out.println("file not found");
         }
+        //builds the matrix of all the subscribers
         Subscriber[][] subs = new Subscriber[4][];
+        //reads from the json
         JsonArray inventory = mi6.getAsJsonArray("inventory");
         JsonObject services = mi6.getAsJsonObject("services");
         JsonArray squad = mi6.getAsJsonArray("squad");
+        //creates the inventory
         Inventory.getInstance().load(addToInventory(inventory));
+        //creates the squad
         Squad.getInstance().load(addToSquad(squad));
         int numOfM = services.get("M").getAsInt();
         int numOfMoneyPenny = services.get("Moneypenny").getAsInt();
         JsonArray intelligence = services.getAsJsonArray("intelligence");
         int time = services.get("time").getAsInt();
+        //creates the ms
         M[] msubs = setMs(numOfM);
+        //creates the moneypennys
         Moneypenny[] moneypennnySubs = setMoneypennys(numOfMoneyPenny);
+        //creates the intelligences
         Intelligence[] intelligenceSubs = setIntelligence(intelligence);
+        //creates the q
         Q[] q = {new Q()};
         subs[0] = intelligenceSubs;
-        subs[1] = q;
-        subs[2] = msubs;
+        subs[2] = q;
+        subs[1] = msubs;
         subs[3] = moneypennnySubs;
+        //calculates the number of subscribers
         int numOfSubsAndPubs = numOfM + numOfMoneyPenny + intelligenceSubs.length + q.length;
+        //creates the threads and starts them
         Thread[] threads = new Thread[numOfSubsAndPubs+1];
         int index = 0;
         for (int i = 0; i <subs.length;i++){
@@ -63,30 +74,27 @@ public class initializeMI6 {
                 index++;
             }
         }
-
+        //makes sure to not start the time thread before all threads are initiliaze
         ThreadCounter threadCounter = ThreadCounter.GetInstance();
 
         while (numOfSubsAndPubs != threadCounter.getCount().get()){
 
         }
-
+        //starts time thread
         TimeService timeService = new TimeService(time);
         Thread timeThread = new Thread(timeService);
         threads[index] = timeThread;
         timeThread.setName(timeService.getName());
         timeThread.start();
 
+        //kills the threads
         for (int i =0; i<threads.length;i++){
             try {
-                System.out.println(threads[i].getName() +" join");
                 threads[i].join();
             }
             catch (Exception e){
-
             }
         }
-
-
     }
 
     public String[] addToInventory(JsonArray inventory) {
@@ -147,7 +155,6 @@ public class initializeMI6 {
                 int duration = info.get("duration").getAsInt();
                 String gadget = info.get("gadget").getAsString();
                 String missionName = info.get("name").getAsString();
-                //String missionName = info.get("missionName").getAsString();
                 int timeExpired = info.get("timeExpired").getAsInt();
                 int timeIssued = info.get("timeIssued").getAsInt();
                 MissionInfo missionInfo1 = new MissionInfo(missionName, serialNums, gadget, timeExpired, timeIssued, duration);
@@ -160,6 +167,7 @@ public class initializeMI6 {
         return intelligences;
     }
 
+    //writes the outputs to the given file names
     public void outputFiles (String inventoryPath, String diaryPath){
         Inventory.getInstance().printToFile(inventoryPath);
         Diary.getInstance().printToFile(diaryPath);

@@ -75,22 +75,12 @@ public class Future<T> {
 	 *         elapsed, return null.
 	 */
 	public T get(long timeout, TimeUnit unit) {
-		timeout = unit.toMillis(timeout);
-		int i = 0;
-		while (i<timeout){
-			if (isDone()){
-				return result;
+		synchronized (this) {
+			if (!isDone()) {
+				try { unit.timedWait(this,timeout); } catch (InterruptedException e) {}
 			}
-			else {
-				try {
-					Thread.sleep(1);
-				}
-				catch (Exception e){
-
-				}
-			}
+			return result;
 		}
-		return null;
-	}
 
+	}
 }

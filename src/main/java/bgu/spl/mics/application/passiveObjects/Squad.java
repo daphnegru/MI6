@@ -36,6 +36,7 @@ public class Squad {
 	 * 						of the squad.
 	 */
 	public void load (Agent[] agents) {
+		//loads the agents
 		for(int i=0;i<agents.length;i++){
 			String serial= agents[i].getSerialNumber();
 			this.agents.put(serial,agents[i]);
@@ -46,10 +47,10 @@ public class Squad {
 	 * Releases agents.
 	 */
 	public synchronized void releaseAgents(List<String> serials){
+		//releases the agents
 		for(int i=0;i<serials.size();i++){
 			if(agents.containsKey(serials.get(i))){
 				agents.get(serials.get(i)).release();
-				notifyAll();
 			}
 		}
 	}
@@ -59,16 +60,15 @@ public class Squad {
 	 * @param time   milliseconds to sleep
 	 */
 	public void sendAgents(List<String> serials, int time){
-		long t = time;
-		for (int i = 0; i<serials.size(); i++){
-			Agent a = agents.get(serials.get(i));
-			synchronized (a){
-				try{
-					Thread.sleep(t);
-				}
-				catch (InterruptedException e) {}
-			}
+		//sends the agents
+		try{
+			//simulates the time that the mission takes place
+			Thread.sleep(time*100);
 		}
+		catch (Exception e){
+			Thread.currentThread().interrupt();
+		}
+		//sends the agents to be released
 		releaseAgents(serials);
 	}
 
@@ -78,23 +78,16 @@ public class Squad {
 	 * @return ‘false’ if an agent of serialNumber ‘serial’ is missing, and ‘true’ otherwise
 	 */
 	public boolean getAgents(List<String> serials){
+		//checks if the agents are in squad
 		for (int i = 0; i<serials.size();i++){
 			if (!agents.containsKey(serials.get(i))){
 				return false;
 			}
 		}
-		for (int i = 0; i<serials.size();i++){
+		//after all the agents are in squad he acquires then
+		for (int i = 0; i < serials.size(); i++) {
 			Agent a = agents.get(serials.get(i));
-			synchronized (a){
-				while(!a.isAvailable()){
-					try{
-						//		System.out.println(a.getName() + " waits");
-						a.wait();
-					}
-					catch (InterruptedException e) {}
-				}
-				a.acquire();
-			}
+			a.acquire();
 		}
 		return true;
 	}

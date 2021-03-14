@@ -31,14 +31,16 @@ public class Q extends Subscriber {
 	protected void initialize() {
 		subscribeBroadcast(TickBroadcast.class, tick->{
 			currTick=tick.getTick();
-			//System.out.println("qtime"+currTick);
 		});
 
 		subscribeEvent(GadgetAvailableEvent.class,message ->{
+			//checks if the gadget is in inventory
 			boolean found = inventory.getItem(message.getName());
+			//if so sends the currtick back to m for report
 			if (found){
 				complete(message,currTick);
 			}
+			//sends -1
 			else{
 				complete(message,-1);
 			}

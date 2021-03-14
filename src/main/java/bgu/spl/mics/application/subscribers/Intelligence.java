@@ -37,9 +37,10 @@ public class Intelligence extends Subscriber {
 			this.terminate();
 		});
 		subscribeBroadcast(TickBroadcast.class,(TickBroadcast tickBroadcast)->{
+			//finds the mission with currtick if exists
 			for(MissionInfo mission: missionInfos){
 				if(tickBroadcast.getTick()==mission.getTimeIssued()){
-					//      System.out.println(mission.getMissionName() + " started");
+					//sends the mission message
 					MissionReceivedEvent m = new MissionReceivedEvent(mission);
 					Future<Integer> intel = messageBroker.sendEvent(m);
 				}

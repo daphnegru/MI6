@@ -6,7 +6,7 @@ public class TickBroadcast implements Broadcast {
 
     private int tick;
     private int timel;
-    public TickBroadcast(int tick){
+    public TickBroadcast(int tick, int timel){
         this.tick=tick;
         this.timel=timel;
     }
@@ -15,4 +15,5 @@ public class TickBroadcast implements Broadcast {
         return tick;
     }
     public int getTimel(){return timel;}
+
 }

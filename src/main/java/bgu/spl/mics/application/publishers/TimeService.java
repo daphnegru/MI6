@@ -22,14 +22,16 @@ public class TimeService extends Publisher {
 	private final int tick = 100;
 	private int duration;
 	private Timer timer;
-	private AtomicInteger tickCount;
+//	private AtomicInteger tickCount;
+	private int tickCount;
 
 
 	public TimeService(int duration) {
 		super("TimeService");
 		this.duration=duration;
 		timer = new Timer();
-		tickCount=new AtomicInteger(0);
+//		tickCount=new AtomicInteger(0);
+		tickCount = 0;
 	}
 
 	@Override
@@ -41,7 +43,7 @@ public class TimeService extends Publisher {
 	public void run() {
 		timer.schedule(new TimerTask(){
 			public void run() {
-				if(tickCount.get() == duration){
+				if(tickCount > duration){
 					FinalTickBroadcast finalTick = new FinalTickBroadcast();
 					getSimplePublisher().sendBroadcast(finalTick);
 					timer.cancel();
@@ -49,9 +51,9 @@ public class TimeService extends Publisher {
 					return;
 				}
 				else {
-					TickBroadcast tickBroadcast = new TickBroadcast(tickCount.incrementAndGet());
+					TickBroadcast tickBroadcast = new TickBroadcast(tickCount, duration-tickCount);
 					getSimplePublisher().sendBroadcast(tickBroadcast);
-//					System.out.println(tickBroadcast.getTick());
+					tickCount++;
 				}
 			}
 		},tick,tick);
