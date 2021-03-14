@@ -108,7 +108,6 @@ public abstract class Subscriber extends RunnableSubPub {
      */
     protected final void terminate() {
         this.terminated = true;
-        Thread.currentThread().interrupt();
     }
 
     /**
